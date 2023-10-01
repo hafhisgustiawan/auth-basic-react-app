@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
@@ -11,20 +11,31 @@ const Login = (props) => {
   const [passwordIsValid, setPasswordIsValid] = useState();
   const [formIsValid, setFormIsValid] = useState(false);
 
+  useEffect(() => {
+    // ini akan di eksekusi setelah clean up function, kecual saat pertama loaded
+
+    const identifier = setTimeout(() => {
+      console.log('Use Effect Executed!');
+      setFormIsValid(
+        enteredEmail.includes('@') && enteredPassword.trim().length > 6
+      );
+    }, 500);
+
+    return () => {
+      // ini bernama clean up function
+      // function ini yang akan di eksekusi deluan dibanding yang di atas
+      console.log('clearup function executed!');
+      clearTimeout(identifier);
+    };
+  }, [enteredEmail, enteredPassword]);
+  // useEffect() ini hanya akan di eksekusi jika salah satu deppendencies nya berubah nilai. Cek video 145
+
   const emailChangeHandler = (event) => {
     setEnteredEmail(event.target.value);
-
-    setFormIsValid(
-      event.target.value.includes('@') && enteredPassword.trim().length > 6
-    );
   };
 
   const passwordChangeHandler = (event) => {
     setEnteredPassword(event.target.value);
-
-    setFormIsValid(
-      event.target.value.trim().length > 6 && enteredEmail.includes('@')
-    );
   };
 
   const validateEmailHandler = () => {
