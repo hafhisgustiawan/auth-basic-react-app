@@ -1,8 +1,15 @@
-import React, { useState, useEffect, useReducer, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useContext,
+  useRef,
+} from 'react';
 
 import Card from '../UI/Card/Card';
 import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
+import Input from '../UI/Input/Input';
 import AuthContext from '../../store/AuthContext';
 
 const emailReducer = (state, action) => {
@@ -33,6 +40,8 @@ const passwordReducer = (state, action) => {
 
 const Login = (props) => {
   const ctx = useContext(AuthContext);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
   // const [enteredEmail, setEnteredEmail] = useState('');
   // const [emailIsValid, setEmailIsValid] = useState();
   // const [enteredPassword, setEnteredPassword] = useState('');
@@ -50,7 +59,7 @@ const Login = (props) => {
   });
 
   // useEffect(() => {
-  //   // disini dia akan di eksekusi sekali saja sewaktu page loaded, krn dependencies nya kosong
+  //   // disini dia akan di eksekusi sekali saja sewaktu page loaded, krn dependencies nya kosong dan tidak akan berubah
   //   console.log('EFFECT RUNNING!');
   // }, []);
 
@@ -78,7 +87,7 @@ const Login = (props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [emailIsValid, passwordIsValid]);
-  // useEffect() ini hanya akan di eksekusi jika salah satu deppendencies nya berubah nilai. Cek video 145
+  // useEffect() ini hanya akan di eksekusi jika salah satu atau semua deppendencies nya berubah nilai. Cek video 145
 
   const emailChangeHandler = (event) => {
     // setEnteredEmail(event.target.value);
@@ -106,42 +115,45 @@ const Login = (props) => {
 
   const submitHandler = (event) => {
     event.preventDefault();
+    if (!emailState.isValid || emailState.value.trim().length === 0) {
+      emailInputRef.current.focus();
+      return;
+    }
+    if (!passwordState.isValid || passwordState.value.trim().length === 0) {
+      passwordInputRef.current.focus();
+      return;
+    }
     ctx.onLogin(emailState.value, passwordState.value);
   };
 
   return (
     <Card className={classes.login}>
       <form onSubmit={submitHandler}>
-        <div
-          className={`${classes.control} ${
-            emailState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="email">E-Mail</label>
-          <input
-            type="email"
-            id="email"
-            value={emailState.value}
-            onChange={emailChangeHandler}
-            onBlur={validateEmailHandler}
-          />
-        </div>
-        <div
-          className={`${classes.control} ${
-            passwordState.isValid === false ? classes.invalid : ''
-          }`}
-        >
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={passwordState.value}
-            onChange={passwordChangeHandler}
-            onBlur={validatePasswordHandler}
-          />
-        </div>
+        <Input
+          ref={emailInputRef}
+          type="email"
+          id="email"
+          label="E-Mail"
+          isValid={emailState.isValid}
+          value={emailState.value}
+          onChange={emailChangeHandler}
+          onBlur={validateEmailHandler}
+        />
+        <Input
+          ref={passwordInputRef}
+          type="password"
+          id="password"
+          label="Password"
+          isValid={passwordState.isValid}
+          value={passwordState.value}
+          onChange={passwordChangeHandler}
+          onBlur={validatePasswordHandler}
+        />
         <div className={classes.actions}>
-          <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+          {/* <Button type="submit" className={classes.btn} disabled={!formIsValid}>
+            Login
+          </Button> */}
+          <Button type="submit" className={classes.btn}>
             Login
           </Button>
         </div>

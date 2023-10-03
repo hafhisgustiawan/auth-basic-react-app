@@ -11,6 +11,7 @@ export const AuthContextProvider = (props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    // USE EFFECT RUNS AFTER EVERY COMPENENT RENDERED
     // hanya di eksekusi jika dependencies nya berubah, dalam hal ini dependencies nya kosong, ketika cycle kedua dia tidak berubah krn memang kosong, cek video 145
     const storedUserLoggedIn = localStorage.getItem('isLoggedIn');
     if (storedUserLoggedIn === '1') setIsLoggedIn(true);
